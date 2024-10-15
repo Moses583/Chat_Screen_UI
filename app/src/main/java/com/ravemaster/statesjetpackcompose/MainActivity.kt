@@ -1,8 +1,6 @@
 package com.ravemaster.statesjetpackcompose
 
 import android.os.Bundle
-import android.text.method.TextKeyListener
-import android.widget.ToggleButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,32 +13,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Send
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -83,9 +71,11 @@ fun MainComposer(modifier: Modifier = Modifier) {
         mutableStateListOf<String>()
     }
 
-    TextList(modifier = modifier, list = myList)
+    LazyColumnComposable(
+        modifier = modifier,
+        list = myList)
 
-    Greeting(
+    TextFieldComposable(
         modifier = modifier,
         textValue = input,
         onValueChanged = { input = it },
@@ -98,33 +88,33 @@ fun MainComposer(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun TextList(
+fun LazyColumnComposable(
     modifier: Modifier = Modifier,
     list: List<String>
 ) {
-
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight(1f)
+            .fillMaxHeight(0.9f)
             .padding(horizontal = 10.dp)
     ) {
-//        list.mapIndexed { index, s ->
-//            item {
-//                ItemInList(s = s)
-//            }
-//
-//        }
         itemsIndexed(list){index, item ->
-            ItemInList(s = item, i = index)
+            Box(modifier = Modifier.fillMaxWidth()){
+                if (index % 2 == 0){
+                    LazyColumnItem(s = item, modifier = Modifier.align(Alignment.CenterEnd))
+                } else {
+                    LazyColumnItem(s = item, modifier = Modifier.align(Alignment.CenterStart))
+                }
+            }
+
         }
     }
 }
 
 @Composable
-fun ItemInList(s: String, i: Int) {
+fun LazyColumnItem(s: String, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .widthIn(200.dp)
             .heightIn(70.dp)
             .padding(10.dp)
@@ -153,7 +143,7 @@ fun ItemInList(s: String, i: Int) {
 }
 
 @Composable
-fun Greeting(
+fun TextFieldComposable(
     modifier: Modifier = Modifier,
     textValue: String,
     onValueChanged: (String) -> Unit,
@@ -161,7 +151,7 @@ fun Greeting(
 ) {
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().fillMaxHeight(0.1f),
     ) {
         Row(
             modifier = modifier
@@ -205,6 +195,5 @@ fun Greeting(
 @Composable
 fun GreetingPreview() {
     StatesJetpackComposeTheme {
-        ItemInList(s = "Should I call you mister",0)
     }
 }
