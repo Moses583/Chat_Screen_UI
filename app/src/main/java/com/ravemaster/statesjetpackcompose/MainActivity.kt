@@ -43,10 +43,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.ravemaster.statesjetpackcompose.ui.theme.StatesJetpackComposeTheme
 
 
 class MainActivity : ComponentActivity() {
+
+    val viewModel by lazy{
+        ViewModelProvider(this).get(MyViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +59,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             StatesJetpackComposeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainComposer(modifier = Modifier.padding(innerPadding))
+                    MainComposer(modifier = Modifier.padding(innerPadding), viewModel)
                 }
             }
         }
@@ -62,26 +67,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainComposer(modifier: Modifier = Modifier) {
-    var input by remember {
-        mutableStateOf("")
-    }
+fun MainComposer(modifier: Modifier = Modifier, viewModel: MyViewModel) {
 
-    val myList = remember {
-        mutableStateListOf<String>()
-    }
+    val state = viewModel.state.value
 
     LazyColumnComposable(
         modifier = modifier,
-        list = myList)
+        list = state.nameList)
 
     TextFieldComposable(
         modifier = modifier,
-        textValue = input,
-        onValueChanged = { input = it },
+        textValue = state.input,
+        onValueChanged = { viewModel.updateText(it) },
         onAddClicked = {
-            myList.add(input)
-            input = ""
+            viewModel.updateNamesList(state.input)
+            viewModel.updateText("")
         }
     )
 }
